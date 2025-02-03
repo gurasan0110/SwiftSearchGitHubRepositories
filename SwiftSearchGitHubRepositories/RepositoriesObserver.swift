@@ -9,12 +9,16 @@ import Foundation
 
 @Observable
 class RepositoriesObserver {
+    static let shared = RepositoriesObserver()
+    
     var repositories: Pagination<Repository>?
     var q: String?
     var isErrorPresented = false
     var error: Error?
     
     private let client = SearchClient()
+    
+    private init() {}
     
     @MainActor
     func searchRepositories() async {

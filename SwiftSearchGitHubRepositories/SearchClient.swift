@@ -32,9 +32,13 @@ struct SearchClient {
                 }
             }
             
-            return try JSONDecoder().decode(Pagination.self, from: data)
+            do {
+                return try JSONDecoder().decode(Pagination.self, from: data)
+            } catch {
+                throw Error.decodeFailed
+            }
         } catch {
-            throw Error.unknown
+            throw Error.searchFailed
         }
     }
     
@@ -43,7 +47,8 @@ struct SearchClient {
         case notModified
         case unprocessableContent
         case serviceUnavailable
-        case unknown
+        case decodeFailed
+        case searchFailed
         
         var errorDescription: String? {
             switch self {
@@ -55,8 +60,10 @@ struct SearchClient {
                 "Validation failed, or the endpoint has been spammed."
             case .serviceUnavailable:
                 "Service unavailable"
-            case .unknown:
-                "Unknown"
+            case .decodeFailed:
+                "Decode failed"
+            case .searchFailed:
+                "Search failed"
             }
         }
     }
